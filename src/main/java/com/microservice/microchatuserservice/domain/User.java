@@ -17,4 +17,5 @@ public class User {
     private String email;
     private Integer age;
     private boolean emailVerified;
+    private Role role;
 }

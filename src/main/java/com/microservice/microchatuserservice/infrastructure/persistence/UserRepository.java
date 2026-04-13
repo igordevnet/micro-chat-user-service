@@ -2,10 +2,11 @@ package com.microservice.microchatuserservice.infrastructure.persistence;
 
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.User;
+
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    User findUserByEmail(String email);
+    Optional<UserEntity> findUserByEmail(String email);
 
-    User findUserByUsername(String username);
+    Optional<UserEntity> findUserByUsername(String username);
 }

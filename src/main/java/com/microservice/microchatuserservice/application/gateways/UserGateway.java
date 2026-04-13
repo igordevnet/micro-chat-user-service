@@ -1,11 +1,15 @@
 package com.microservice.microchatuserservice.application.gateways;
 
-import org.springframework.security.core.userdetails.User;
+import com.microservice.microchatuserservice.domain.User;
+
+import java.util.Optional;
 
 public interface UserGateway {
-    User findUserByEmail(String email);
+    User register(User user);
 
-    User findUserByUsername(String username);
+    Optional<User> findUserByEmail(String email);
+
+    Optional<User> findUserByUsername(String username);
 
     Boolean existsUserByEmail(String email);
 
