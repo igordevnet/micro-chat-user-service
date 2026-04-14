@@ -18,4 +18,8 @@ public class User {
     private Integer age;
     private boolean emailVerified;
     private Role role;
+
+    public void verifyEmail() {
+        this.emailVerified = true;
+    }
 }
