@@ -28,7 +28,6 @@ public class UserDetailsAdapter implements UserDetails {
         return user.getPassword();
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (user.getRole() == null) {

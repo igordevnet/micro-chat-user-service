@@ -1,9 +1,6 @@
 package com.microservice.microchatuserservice.controller.handler;
 
-import com.microservice.microchatuserservice.application.Exceptions.EmailAlreadyInUseException;
-import com.microservice.microchatuserservice.application.Exceptions.InvalidCredentialsException;
-import com.microservice.microchatuserservice.application.Exceptions.UserNotFoundException;
-import com.microservice.microchatuserservice.application.Exceptions.UsernameAlreadyInUseException;
+import com.microservice.microchatuserservice.application.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,6 +52,30 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<StandardError> handleInvalidCredentialsException(InvalidCredentialsException e, HttpServletRequest request) {
+        var response = StandardError.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDate.now())
+                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<StandardError> handleInvalidTokenException(InvalidTokenException e, HttpServletRequest request) {
+        var response = StandardError.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDate.now())
+                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidVerifyCodeException.class)
+    public ResponseEntity<StandardError> handleInvalidVerifyCodeException(InvalidVerifyCodeException e, HttpServletRequest request) {
         var response = StandardError.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDate.now())
