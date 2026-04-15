@@ -2,7 +2,7 @@ package com.microservice.microchatuserservice.infrastructure.gateways;
 
 import com.microservice.microchatuserservice.application.gateways.ResetPasswordGateway;
 import com.microservice.microchatuserservice.domain.User;
-import com.microservice.microchatuserservice.infrastructure.mappers.UserMapper;
+import com.microservice.microchatuserservice.infrastructure.persistence.mappers.UserMapper;
 import com.microservice.microchatuserservice.infrastructure.persistence.ResetPasswordRepository;
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.ResetPasswordTokenEntity;
 import lombok.RequiredArgsConstructor;

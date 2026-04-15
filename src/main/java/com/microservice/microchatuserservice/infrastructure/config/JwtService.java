@@ -1,10 +1,13 @@
 package com.microservice.microchatuserservice.infrastructure.config;
 
+import com.microservice.microchatuserservice.application.gateways.TokenGateway;
+import com.microservice.microchatuserservice.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -13,10 +16,14 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
+
+    private final TokenGateway tokenGateway;
 
     @Value("${security.secret-key}")
     private String SECRET_KEY;
@@ -41,10 +48,12 @@ public class JwtService {
         return buildToken(extraClaims, userDetails, JWT_EXPIRATION);
     }
 
-    public String generateRefreshToken(
-            UserDetails userDetails
-    ) {
-        return buildToken(new HashMap<>(), userDetails, REFRESH_EXPIRATION);
+    public String generateRefreshToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    public User validateRefreshToken(String refreshToken) {
+        return tokenGateway.isTokenValid(refreshToken);
     }
 
     private String buildToken(
