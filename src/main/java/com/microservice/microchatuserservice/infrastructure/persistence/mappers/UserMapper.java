@@ -1,4 +1,4 @@
-package com.microservice.microchatuserservice.infrastructure.mappers;
+package com.microservice.microchatuserservice.infrastructure.persistence.mappers;
 
 import com.microservice.microchatuserservice.domain.User;
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.UserEntity;

@@ -87,7 +87,7 @@ public class AuthUseCase {
             extraClaims.put("role", role);
 
             var accessToken = jwtService.generateToken(extraClaims, userDetails);
-            var refreshToken = jwtService.generateRefreshToken(userDetails);
+            var refreshToken = jwtService.generateRefreshToken();
 
             User user = userDetails.getUser();
             tokenGateway.revokeAllUserTokens(user);
@@ -109,16 +109,10 @@ public class AuthUseCase {
         throwIfHeaderIsEmpty(authHeader);
 
         String refreshToken = authHeader.substring(7);
-        String username = jwtService.extractUsername(refreshToken);
 
-        throwIfUsernameIsEmpty(username);
-
-        User user = userGateway.findUserByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        User user = jwtService.validateRefreshToken(refreshToken);
 
         UserDetails userDetails = new UserDetailsAdapter(user);
-
-        throwIfRefreshTokenIsInvalid(refreshToken, userDetails);
 
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -128,34 +122,20 @@ public class AuthUseCase {
         Map<String, Object> extraClaims = Map.of("role", role);
 
         String newAccessToken = jwtService.generateToken(extraClaims, userDetails);
-        String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+        String newRefreshToken = jwtService.generateRefreshToken();
 
         tokenGateway.revokeAllUserTokens(user);
         tokenGateway.saveUserToken(user, newRefreshToken);
 
         return LoginResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(newRefreshToken)
                 .build();
     }
 
     private void throwIfHeaderIsEmpty(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing refresh token");
-        }
-    }
-
-    private void throwIfUsernameIsEmpty(String username) {
-        if (username == null) {
-            log.error("Invalid refresh token");
-            throw new InvalidCredentialsException("Invalid refresh token");
-        }
-    }
-
-    private void throwIfRefreshTokenIsInvalid(String refreshToken, UserDetails userDetails) {
-        if (!jwtService.isTokenValid(refreshToken, userDetails)) {
-            log.error("Invalid refresh token");
-            throw new InvalidCredentialsException("Invalid refresh token");
         }
     }
 

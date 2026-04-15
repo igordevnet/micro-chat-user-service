@@ -2,7 +2,7 @@ package com.microservice.microchatuserservice.infrastructure.gateways;
 
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import com.microservice.microchatuserservice.domain.User;
-import com.microservice.microchatuserservice.infrastructure.mappers.UserMapper;
+import com.microservice.microchatuserservice.infrastructure.persistence.mappers.UserMapper;
 import com.microservice.microchatuserservice.infrastructure.persistence.UserRepository;
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.UserEntity;
 import lombok.RequiredArgsConstructor;

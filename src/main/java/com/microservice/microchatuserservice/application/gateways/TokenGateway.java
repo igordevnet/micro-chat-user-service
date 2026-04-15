@@ -7,7 +7,7 @@ public interface TokenGateway {
 
     void revokeAllUserTokens(User user);
 
-    boolean isTokenValid(String token);
+    User isTokenValid(String token);
 
     void logout(String token);
 }
