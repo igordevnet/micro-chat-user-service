@@ -82,9 +82,7 @@ public class AuthUseCase {
                     .map(GrantedAuthority::getAuthority)
                     .orElse("ROLE_USER");
 
-            Map<String, Object> extraClaims = new HashMap<>();
-
-            extraClaims.put("role", role);
+            Map<String, Object> extraClaims = Map.of("role", role, "userId",  userDetails.getUser().getId());
 
             var accessToken = jwtService.generateToken(extraClaims, userDetails);
             var refreshToken = jwtService.generateRefreshToken();
@@ -117,9 +115,9 @@ public class AuthUseCase {
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElseThrow();
+                .orElse("ROLE_USER");
 
-        Map<String, Object> extraClaims = Map.of("role", role);
+        Map<String, Object> extraClaims = Map.of("role", role, "userId",  user.getId());
 
         String newAccessToken = jwtService.generateToken(extraClaims, userDetails);
         String newRefreshToken = jwtService.generateRefreshToken();
