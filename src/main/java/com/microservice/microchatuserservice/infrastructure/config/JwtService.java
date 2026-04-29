@@ -1,5 +1,6 @@
 package com.microservice.microchatuserservice.infrastructure.config;
 
+import com.microservice.microchatuserservice.application.gateways.CacheTokenGateway;
 import com.microservice.microchatuserservice.application.gateways.TokenGateway;
 import com.microservice.microchatuserservice.domain.User;
 import io.jsonwebtoken.Claims;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -24,6 +24,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private final TokenGateway tokenGateway;
+    private final CacheTokenGateway cacheTokenGateway;
 
     @Value("${security.secret-key}")
     private String SECRET_KEY;
@@ -72,7 +73,11 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        boolean tokenIsBlacklisted = cacheTokenGateway.checkIfTokenIsInvalid(token);
+        return (username.equals(
+                userDetails.getUsername()))
+                && !isTokenExpired(token)
+                && !tokenIsBlacklisted;
     }
 
     private boolean isTokenExpired(String token) {
