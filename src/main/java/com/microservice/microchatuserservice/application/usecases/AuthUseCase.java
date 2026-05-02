@@ -1,24 +1,27 @@
 package com.microservice.microchatuserservice.application.usecases;
 
+import com.microservice.microchatuserservice.application.Exceptions.InvalidCookieException;
 import com.microservice.microchatuserservice.application.Exceptions.EmailAlreadyInUseException;
 import com.microservice.microchatuserservice.application.Exceptions.InvalidCredentialsException;
-import com.microservice.microchatuserservice.application.Exceptions.UserNotFoundException;
 import com.microservice.microchatuserservice.application.Exceptions.UsernameAlreadyInUseException;
 import com.microservice.microchatuserservice.application.gateways.TokenGateway;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import com.microservice.microchatuserservice.controller.dto.request.LoginRequest;
 import com.microservice.microchatuserservice.controller.dto.request.RegisterRequest;
-import com.microservice.microchatuserservice.controller.dto.response.LoginResponse;
+import com.microservice.microchatuserservice.controller.dto.response.AuthResponse;
 import com.microservice.microchatuserservice.controller.dto.response.RegisterResponse;
 import com.microservice.microchatuserservice.domain.Role;
 import com.microservice.microchatuserservice.domain.User;
 import com.microservice.microchatuserservice.infrastructure.config.JwtService;
 import com.microservice.microchatuserservice.infrastructure.config.UserDetailsAdapter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -28,9 +31,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 @Service
@@ -45,6 +47,7 @@ public class AuthUseCase {
     private final JwtService jwtService;
     private final EmailService emailService;
 
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
         throwIfEmailAlreadyExists(request.email());
         throwIfUsernameAlreadyExists(request.username());
@@ -66,7 +69,10 @@ public class AuthUseCase {
         return new RegisterResponse(response.getUsername());
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public AuthResponse login(
+            LoginRequest request,
+            HttpServletResponse response
+            ) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -91,9 +97,11 @@ public class AuthUseCase {
             tokenGateway.revokeAllUserTokens(user);
             tokenGateway.saveUserToken(user, refreshToken);
 
-            return LoginResponse.builder()
+            var authCookie = generateCookie(refreshToken);
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+
+            return AuthResponse.builder()
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
                     .build();
 
         } catch (BadCredentialsException | InternalAuthenticationServiceException ex) {
@@ -101,12 +109,11 @@ public class AuthUseCase {
         }
     }
 
-    public LoginResponse refreshToken(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        throwIfHeaderIsEmpty(authHeader);
-
-        String refreshToken = authHeader.substring(7);
+    public AuthResponse refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        String refreshToken = getRefreshTokenFromCookie(request);
 
         User user = jwtService.validateRefreshToken(refreshToken);
 
@@ -125,27 +132,47 @@ public class AuthUseCase {
         tokenGateway.revokeAllUserTokens(user);
         tokenGateway.saveUserToken(user, newRefreshToken);
 
-        return LoginResponse.builder()
+        var authCookie = generateCookie(newRefreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+
+        return AuthResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
                 .build();
     }
 
-    private void throwIfHeaderIsEmpty(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing refresh token");
-        }
-    }
-
     private void throwIfEmailAlreadyExists(String email) {
-        if (userGateway.existsUserByEmail(email) != null) {
+        if (userGateway.existsUserByEmail(email)) {
             throw new EmailAlreadyInUseException("Email already exists");
         }
     }
 
     private void throwIfUsernameAlreadyExists(String username) {
-        if (userGateway.existsUserByUsername(username) != null) {
+        if (userGateway.existsUserByUsername(username)) {
             throw new UsernameAlreadyInUseException("Username already exists");
         }
+    }
+
+    private ResponseCookie generateCookie(String refreshToken) {
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Strict")
+                .build();
+    }
+
+    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            throw new InvalidCookieException();
+        }
+
+        return Arrays.stream(cookies)
+                .filter(c -> "refreshToken".equals(c.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElseThrow(InvalidCookieException::new);
     }
 }

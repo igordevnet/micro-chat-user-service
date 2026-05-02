@@ -40,11 +40,11 @@ public class UserRepositoryGateway implements UserGateway {
 
     @Override
     public Boolean existsUserByEmail(String email) {
-        return null;
+        return userRepository.existsByEmail(email);
     }
 
     @Override
     public Boolean existsUserByUsername(String username) {
-        return null;
+        return userRepository.existsByUsername(username);
     }
 }

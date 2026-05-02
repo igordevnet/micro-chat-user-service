@@ -4,9 +4,10 @@ import com.microservice.microchatuserservice.application.usecases.AuthUseCase;
 import com.microservice.microchatuserservice.application.usecases.EmailService;
 import com.microservice.microchatuserservice.application.usecases.ResetPasswordService;
 import com.microservice.microchatuserservice.controller.dto.request.*;
-import com.microservice.microchatuserservice.controller.dto.response.LoginResponse;
+import com.microservice.microchatuserservice.controller.dto.response.AuthResponse;
 import com.microservice.microchatuserservice.controller.dto.response.RegisterResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,17 +36,19 @@ public class AuthController {
     }
 
     @PostMapping("/local/signin")
-    public ResponseEntity<LoginResponse> login(
-            @RequestBody @Valid LoginRequest loginRequest
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody @Valid LoginRequest loginRequest,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authUseCase.login(loginRequest));
+        return ResponseEntity.ok(authUseCase.login(loginRequest, response));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(
-            HttpServletRequest request
+    public ResponseEntity<AuthResponse> refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authUseCase.refreshToken(request));
+        return ResponseEntity.ok(authUseCase.refreshToken(request, response));
     }
 
     @PostMapping("/forgot-password")

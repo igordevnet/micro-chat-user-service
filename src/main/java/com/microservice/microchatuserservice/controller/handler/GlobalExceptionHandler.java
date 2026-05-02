@@ -86,6 +86,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(InvalidCookieException.class)
+    public  ResponseEntity<StandardError> handleInvalidCookieException(InvalidCookieException e, HttpServletRequest request) {
+        var response = StandardError.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDate.now())
+                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardError> handleValidationErrors(MethodArgumentNotValidException e, HttpServletRequest request) {
         String errorMessage = e.getBindingResult().getFieldErrors()
