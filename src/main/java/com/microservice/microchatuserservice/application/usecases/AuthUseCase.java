@@ -141,13 +141,13 @@ public class AuthUseCase {
     }
 
     private void throwIfEmailAlreadyExists(String email) {
-        if (userGateway.existsUserByEmail(email) != null) {
+        if (userGateway.existsUserByEmail(email)) {
             throw new EmailAlreadyInUseException("Email already exists");
         }
     }
 
     private void throwIfUsernameAlreadyExists(String username) {
-        if (userGateway.existsUserByUsername(username) != null) {
+        if (userGateway.existsUserByUsername(username)) {
             throw new UsernameAlreadyInUseException("Username already exists");
         }
     }

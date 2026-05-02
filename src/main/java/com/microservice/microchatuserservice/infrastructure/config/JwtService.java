@@ -73,7 +73,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        boolean tokenIsBlacklisted = cacheTokenGateway.checkIfTokenIsInvalid(token);
+        boolean tokenIsBlacklisted = cacheTokenGateway.isBlacklisted(token);
         return (username.equals(
                 userDetails.getUsername()))
                 && !isTokenExpired(token)

@@ -24,7 +24,7 @@ public class RedisTokenGateway implements CacheTokenGateway {
     }
 
     @Override
-    public boolean checkIfTokenIsInvalid(String accessToken) {
+    public boolean isBlacklisted(String accessToken) {
         String result = redisTemplate.opsForValue().get(TOKEN_PREFIX + accessToken);
         return result != null;
     }
