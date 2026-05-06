@@ -46,7 +46,7 @@ public class SecurityConfiguration {
                                 SecurityContextHolder.clearContext()
                         ))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
