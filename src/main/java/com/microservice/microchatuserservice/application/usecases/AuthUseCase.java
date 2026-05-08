@@ -1,9 +1,9 @@
 package com.microservice.microchatuserservice.application.usecases;
 
-import com.microservice.microchatuserservice.application.Exceptions.InvalidCookieException;
-import com.microservice.microchatuserservice.application.Exceptions.EmailAlreadyInUseException;
-import com.microservice.microchatuserservice.application.Exceptions.InvalidCredentialsException;
-import com.microservice.microchatuserservice.application.Exceptions.UsernameAlreadyInUseException;
+import com.microservice.microchatuserservice.application.exceptions.InvalidCookieException;
+import com.microservice.microchatuserservice.application.exceptions.EmailAlreadyInUseException;
+import com.microservice.microchatuserservice.application.exceptions.InvalidCredentialsException;
+import com.microservice.microchatuserservice.application.exceptions.UsernameAlreadyInUseException;
 import com.microservice.microchatuserservice.application.gateways.TokenGateway;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import com.microservice.microchatuserservice.controller.dto.request.LoginRequest;

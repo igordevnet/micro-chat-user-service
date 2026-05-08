@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: micro-chat-user-service
+
+  datasource:
+    url: jdbc:postgresql://${HOST:localhost}:${PORT:5432}/${DB_NAME:db_micro_chat}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:our-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+security:
+  secret-key: ${SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  jwt-expiration: ${JWT_EXPIRATION:1440000}
+  refresh-expiration: ${REFRESH_EXPIRATION:604800000}
+
+app:
+  url: http://localhost:4200

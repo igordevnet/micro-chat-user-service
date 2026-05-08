@@ -1,7 +1,7 @@
 package com.microservice.microchatuserservice.application.usecases;
 
-import com.microservice.microchatuserservice.application.Exceptions.InvalidVerifyCodeException;
-import com.microservice.microchatuserservice.application.Exceptions.UserNotFoundException;
+import com.microservice.microchatuserservice.application.exceptions.InvalidVerifyCodeException;
+import com.microservice.microchatuserservice.application.exceptions.UserNotFoundException;
 import com.microservice.microchatuserservice.application.gateways.EmailGateway;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import com.microservice.microchatuserservice.application.gateways.VerifyEmailGateway;

@@ -1,7 +1,7 @@
 package com.microservice.microchatuserservice.application.usecases;
 
-import com.microservice.microchatuserservice.application.Exceptions.InvalidTokenException;
-import com.microservice.microchatuserservice.application.Exceptions.UserNotFoundException;
+import com.microservice.microchatuserservice.application.exceptions.InvalidTokenException;
+import com.microservice.microchatuserservice.application.exceptions.UserNotFoundException;
 import com.microservice.microchatuserservice.application.gateways.EmailGateway;
 import com.microservice.microchatuserservice.application.gateways.ResetPasswordGateway;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;

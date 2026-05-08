@@ -1,6 +1,6 @@
 package com.microservice.microchatuserservice.infrastructure.gateways;
 
-import com.microservice.microchatuserservice.application.Exceptions.InvalidCredentialsException;
+import com.microservice.microchatuserservice.application.exceptions.InvalidCredentialsException;
 import com.microservice.microchatuserservice.application.gateways.TokenGateway;
 import com.microservice.microchatuserservice.domain.User;
 import com.microservice.microchatuserservice.infrastructure.persistence.mappers.UserMapper;
