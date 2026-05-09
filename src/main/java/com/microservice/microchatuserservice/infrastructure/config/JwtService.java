@@ -30,8 +30,6 @@ public class JwtService {
     private String SECRET_KEY;
     @Value("${security.jwt-expiration}")
     private long JWT_EXPIRATION;
-    @Value("${security.refresh-expiration}")
-    private long REFRESH_EXPIRATION;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

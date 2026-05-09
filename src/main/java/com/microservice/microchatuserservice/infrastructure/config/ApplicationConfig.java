@@ -1,6 +1,6 @@
 package com.microservice.microchatuserservice.infrastructure.config;
 
-import com.microservice.microchatuserservice.application.Exceptions.UserNotFoundException;
+import com.microservice.microchatuserservice.application.exceptions.UserNotFoundException;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

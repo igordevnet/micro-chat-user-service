@@ -1,6 +1,6 @@
 package com.microservice.microchatuserservice.controller.handler;
 
-import com.microservice.microchatuserservice.application.Exceptions.*;
+import com.microservice.microchatuserservice.application.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 @ControllerAdvice

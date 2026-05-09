@@ -1,4 +1,4 @@
-package com.microservice.microchatuserservice.application.Exceptions;
+package com.microservice.microchatuserservice.application.exceptions;
 
 public class EmailAlreadyInUseException extends BusinessException{
 
