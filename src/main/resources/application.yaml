@@ -16,6 +16,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -30,7 +35,7 @@ spring:
             required: true
 
 security:
-  secret-key: ${SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
   jwt-expiration: ${JWT_EXPIRATION:1440000}
   refresh-expiration: ${REFRESH_EXPIRATION:604800000}
 

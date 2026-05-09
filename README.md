@@ -32,13 +32,15 @@ This service acts as the Identity Provider (IdP) for the entire distributed syst
 
 To run this service locally or in a Kubernetes cluster, configure the following environment variables. If omitted, the application will safely default to the fallback values.
 
-### 🗄️ Database (PostgreSQL)
+### 🗄️ Database (PostgreSQL) & Caching
 
-| Variable | Description | Default Fallback |
-| :--- | :--- | :--- |
-| `HOST` | PostgreSQL database host | `localhost` |
-| `PORT` | PostgreSQL database port | `5432` |
-| `DB_NAME` | Database schema name | `db_micro_chat` |
+| Variable                 | Description              | Default Fallback |
+|:-------------------------|:-------------------------|:-----------------|
+| `HOST`                   | PostgreSQL database host | `localhost`      |
+| `PORT`                   | PostgreSQL database port | `5432`           |
+| `DB_NAME`                | Database schema name     | `db_micro_chat`  |
+| `SPRING_DATA_REDIS_HOST` | Redis host               | `localhost`      |
+| `SPRING_DATA_REDIS_PORT` | Redis port               | `6379`           |
 
 ### 🔒 Security & JWT
 
@@ -49,12 +51,12 @@ To run this service locally or in a Kubernetes cluster, configure the following 
 
 ### 📧 SMTP Mail Server (Verification & Recovery)
 
-| Variable | Description | Default Fallback |
-| :--- | :--- | :--- |
-| `MAIL_HOST` | SMTP server address | `smtp.gmail.com` |
-| `MAIL_PORT` | SMTP server port | `587` |
+| Variable | Description | Default Fallback       |
+| :--- | :--- |:-----------------------|
+| `MAIL_HOST` | SMTP server address | `smtp.gmail.com`       |
+| `MAIL_PORT` | SMTP server port | `587`                  |
 | `MAIL_USERNAME` | Email address used to send outgoing mail | `your-email@gmail.com` |
-| `MAIL_PASSWORD` | App-specific password for the SMTP account | `our-app-password` |
+| `MAIL_PASSWORD` | App-specific password for the SMTP account | `your-app-password`    |
 
 ### 🌐 Frontend Configuration
 
