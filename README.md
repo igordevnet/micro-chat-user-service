@@ -46,7 +46,6 @@ To run this service locally or in a Kubernetes cluster, configure the following 
 | :--- | :--- | :--- |
 | `SECRET_KEY` | Base64 encoded secret for signing Access & Refresh Tokens | `404E63...` |
 | `JWT_EXPIRATION` | Access token lifespan in milliseconds (Default: 24 mins) | `1440000` |
-| `REFRESH_EXPIRATION` | Refresh token lifespan in milliseconds (Default: 7 days) | `604800000` |
 
 ### 📧 SMTP Mail Server (Verification & Recovery)
 

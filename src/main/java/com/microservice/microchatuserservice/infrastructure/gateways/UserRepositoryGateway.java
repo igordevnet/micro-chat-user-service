@@ -6,6 +6,8 @@ import com.microservice.microchatuserservice.infrastructure.persistence.mappers.
 import com.microservice.microchatuserservice.infrastructure.persistence.UserRepository;
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -46,5 +48,11 @@ public class UserRepositoryGateway implements UserGateway {
     @Override
     public Boolean existsUserByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Page<User> findUsersByUsername(String username, Long userId, Pageable pageable) {
+        return userRepository.searchUsers(username, userId, pageable)
+                .map(userMapper::entityToDomain);
     }
 }
