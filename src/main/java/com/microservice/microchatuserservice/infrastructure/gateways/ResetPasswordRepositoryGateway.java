@@ -7,6 +7,7 @@ import com.microservice.microchatuserservice.infrastructure.persistence.ResetPas
 import com.microservice.microchatuserservice.infrastructure.persistence.entities.ResetPasswordTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -19,6 +20,8 @@ public class ResetPasswordRepositoryGateway implements ResetPasswordGateway {
 
     @Override
     public void createResetPasswordTokenForUser(User user, String token) {
+        tokenRepository.deleteByUserId(user.getId());
+
         ResetPasswordTokenEntity myToken = ResetPasswordTokenEntity.builder()
                 .token(token)
                 .user(userMapper.domainToEntity(user))
