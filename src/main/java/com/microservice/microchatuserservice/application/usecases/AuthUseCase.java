@@ -158,7 +158,7 @@ public class AuthUseCase {
                 .secure(false)
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
     }
 

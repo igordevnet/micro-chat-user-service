@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.microservice.microchatuserservice.application.usecases.VerificationCodeGenerator.generateCode;
 
