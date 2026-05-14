@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -53,6 +54,12 @@ public class UserRepositoryGateway implements UserGateway {
     @Override
     public Page<User> findUsersByUsername(String username, Long userId, Pageable pageable) {
         return userRepository.searchUsers(username, userId, pageable)
+                .map(userMapper::entityToDomain);
+    }
+
+    @Override
+    public Page<User> findUsersById(List<Long> ids, Pageable pageable) {
+        return userRepository.findAllByIdIn(ids, pageable)
                 .map(userMapper::entityToDomain);
     }
 }

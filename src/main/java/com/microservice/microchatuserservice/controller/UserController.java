@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request (e.g., missing keyword or pagination bounds)", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Valid JWT required", content = @Content)
     })
-    @GetMapping
+    @GetMapping(params = "username")
     public ResponseEntity<UserPaginatedResponse> searchUsers(
             @Parameter(description = "Keyword to search for in username or email", required = true, example = "igor")
             @RequestParam String username,
@@ -46,5 +48,25 @@ public class UserController {
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsAdapter user
     ) {
         return ResponseEntity.ok(userUseCase.searchUsersByName(username, user.getUser().getId(), page, size));
+    }
+
+    @Operation(summary = "Fetch users by id", description = "Searches for users by a list of ids. Returns a paginated list.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserPaginatedResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request (e.g., missing keyword or pagination bounds)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Valid JWT required", content = @Content)
+    })
+    @GetMapping(params = "ids")
+    public ResponseEntity<UserPaginatedResponse> getUsersById(
+            @Parameter(description = "Users' ids to retrieve")
+            @RequestParam List<Long> ids,
+            @Parameter(description = "Page number (zero-based)", example = "0")
+            @RequestParam int page,
+            @Parameter(description = "Number of records per page", example = "10")
+            @RequestParam int size,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsAdapter user
+    ) {
+        return ResponseEntity.ok(userUseCase.findFriendsById(ids, user.getUser().getId(), page, size));
     }
 }

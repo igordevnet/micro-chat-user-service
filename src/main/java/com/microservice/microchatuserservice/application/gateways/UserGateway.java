@@ -20,4 +20,6 @@ public interface UserGateway {
     Boolean existsUserByUsername(String username);
 
     Page<User> findUsersByUsername(String username, Long userId, Pageable pageable);
+
+    Page<User> findUsersById(List<Long> ids, Pageable pageable);
 }
