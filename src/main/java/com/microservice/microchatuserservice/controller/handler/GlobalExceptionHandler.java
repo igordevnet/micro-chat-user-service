@@ -97,6 +97,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public  ResponseEntity<StandardError> handleEmailNotVerifiedException(EmailNotVerifiedException e, HttpServletRequest request) {
+        var response = StandardError.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDate.now())
+                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(FailedToSendEmailException.class)
     public  ResponseEntity<StandardError> handleFailedToSendEmailException(FailedToSendEmailException e, HttpServletRequest request) {
         var response = StandardError.builder()

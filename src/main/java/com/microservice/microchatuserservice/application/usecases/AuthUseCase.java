@@ -1,9 +1,6 @@
 package com.microservice.microchatuserservice.application.usecases;
 
-import com.microservice.microchatuserservice.application.exceptions.InvalidCookieException;
-import com.microservice.microchatuserservice.application.exceptions.EmailAlreadyInUseException;
-import com.microservice.microchatuserservice.application.exceptions.InvalidCredentialsException;
-import com.microservice.microchatuserservice.application.exceptions.UsernameAlreadyInUseException;
+import com.microservice.microchatuserservice.application.exceptions.*;
 import com.microservice.microchatuserservice.application.gateways.TokenGateway;
 import com.microservice.microchatuserservice.application.gateways.UserGateway;
 import com.microservice.microchatuserservice.controller.dto.request.LoginRequest;
@@ -83,6 +80,10 @@ public class AuthUseCase {
 
             UserDetailsAdapter userDetails = (UserDetailsAdapter) authentication.getPrincipal();
 
+            User user = userDetails.getUser();
+
+            throwIfEmailIsNotVerified(user.isEmailVerified(), user.getEmail());
+
             String role = userDetails.getAuthorities().stream()
                     .findFirst()
                     .map(GrantedAuthority::getAuthority)
@@ -97,7 +98,6 @@ public class AuthUseCase {
             var accessToken = jwtService.generateToken(extraClaims, userDetails);
             var refreshToken = jwtService.generateRefreshToken();
 
-            User user = userDetails.getUser();
             tokenGateway.revokeAllUserTokens(user);
             tokenGateway.saveUserToken(user, refreshToken);
 
@@ -160,10 +160,20 @@ public class AuthUseCase {
         }
     }
 
+
+    private void throwIfEmailIsNotVerified(boolean isVerified, String email) {
+        if(!isVerified) {
+            throw new EmailNotVerifiedException(
+                    String.format("Email %s is not verified", email)
+            );
+        }
+    }
+
+
     private ResponseCookie generateCookie(String refreshToken) {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("None")
