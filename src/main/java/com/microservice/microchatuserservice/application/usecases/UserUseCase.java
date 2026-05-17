@@ -46,6 +46,31 @@ public class UserUseCase {
                 .build();
     }
 
+    public UserPaginatedResponse findFriendsById(
+            List<Long> ids,
+            Long userId,
+            int page,
+            int size
+    ) {
+        throwIfTheUserIdIsSmallerThanOne(userId);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<User> userPage = userGateway.findUsersById(ids, pageable);
+
+        List<UserResponse> userList = userPage.getContent()
+                .stream()
+                .map(userMapper::entityToResponse)
+                .toList();
+
+        return UserPaginatedResponse.builder()
+                .content(userList)
+                .currentPage(userPage.getNumber())
+                .totalElements(userPage.getTotalElements())
+                .totalPages(userPage.getTotalPages())
+                .build();
+    }
+
     private void throwIfTheUserIdIsSmallerThanOne(Long userId) {
         if (userId < 1) {
             throw  new InvalidCredentialsException("Please login again");

@@ -1,5 +1,6 @@
 package com.microservice.microchatuserservice.application.usecases;
 
+import com.microservice.microchatuserservice.application.exceptions.FailedToSendEmailException;
 import com.microservice.microchatuserservice.application.exceptions.InvalidVerifyCodeException;
 import com.microservice.microchatuserservice.application.exceptions.UserNotFoundException;
 import com.microservice.microchatuserservice.application.gateways.EmailGateway;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.microservice.microchatuserservice.application.usecases.VerificationCodeGenerator.generateCode;
 
@@ -35,8 +37,8 @@ public class EmailService {
         try {
             sendEmailChecker(email, code);
         } catch (MessagingException | IOException e) {
-            log.error("Error occurred while trying to send email");
-            throw new RuntimeException("Failed to send email", e);
+            logError(e);
+            throw new FailedToSendEmailException("Failed to send email: " + e);
         }
     }
 
@@ -73,9 +75,20 @@ public class EmailService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!user.isEmailVerified()) {
-            if (this.emailChecker.getCodeByEmail(email).isPresent()) {
-                emailChecker.updateVerifyEmailCode(email, generateCode());
+            if (emailChecker.getCodeByEmail(email).isPresent()) {
+                try {
+                    String code = generateCode();
+                    emailChecker.updateVerifyEmailCode(email, code);
+                    sendEmailChecker(email, code);
+                } catch (MessagingException | IOException e) {
+                    logError(e);
+                    throw new FailedToSendEmailException("Failed to send email: "+  e);
+                }
             }
         }
+    }
+
+    private void logError(Exception e) {
+        log.error("Error occurred while trying to send email: {}", String.valueOf(e));
     }
 }

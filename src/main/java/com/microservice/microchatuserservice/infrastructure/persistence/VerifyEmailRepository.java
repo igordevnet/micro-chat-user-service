@@ -14,7 +14,8 @@ public interface VerifyEmailRepository extends JpaRepository<EmailCodeEntity, In
     Optional<EmailCodeEntity> findByEmail(String email);
 
     @Query("""
-        UPDATE EmailCodeEntity e SET e.code = :code
+        UPDATE EmailCodeEntity e SET e.code = :code,
+                e.expiryDate = CURRENT_TIMESTAMP + 15 MINUTE
         WHERE e.email = :email
         """)
     @Modifying
